@@ -13,8 +13,29 @@ resource "azuread_application" "cityoftraitors_github" {
   }
 }
 
-resource "azuread_application_password" "cityoftraitors_github" {
-  application_id    = azuread_application.cityoftraitors_github.id
-  display_name      = "Github Actions"
-  end_date_relative = "8760h"
+resource "azuread_service_principal" "cityoftraitors_github" {
+  client_id                    = azuread_application.cityoftraitors_github.client_id
+  app_role_assignment_required = false
+  owners                       = [data.azurerm_client_config.current.object_id]
+}
+
+resource "azuread_application_federated_identity_credential" "cityoftraitors_github" {
+  application_id = azuread_application.cityoftraitors_github.id
+  display_name   = "github-actions-deploy"
+  description    = "Deploy from GitHub Actions"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:cjjwisniewski/cityoftraitors.com:ref:refs/heads/main"
+}
+
+resource "azurerm_role_assignment" "github_deploy_storage" {
+  scope                = data.azurerm_storage_account.cityoftraitors.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azuread_service_principal.cityoftraitors_github.object_id
+}
+
+resource "azurerm_role_assignment" "github_deploy_cdn" {
+  scope                = data.azurerm_cdn_profile.cityoftraitors.id
+  role_definition_name = "CDN Endpoint Contributor"
+  principal_id         = azuread_service_principal.cityoftraitors_github.object_id
 }
