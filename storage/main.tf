@@ -5,7 +5,12 @@ resource "azurerm_storage_account" "cityoftraitors" {
   account_tier                    = "Standard"
   account_replication_type        = "LRS"
   allow_nested_items_to_be_public = false
-  https_traffic_only_enabled      = false
+  https_traffic_only_enabled      = true
+
+  custom_domain {
+    name          = "cityoftraitors.com"
+    use_subdomain = true
+  }
 }
 
 resource "azurerm_storage_account_static_website" "cityoftraitors" {

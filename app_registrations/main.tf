@@ -33,9 +33,3 @@ resource "azurerm_role_assignment" "github_deploy_storage" {
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azuread_service_principal.cityoftraitors_github.object_id
 }
-
-resource "azurerm_role_assignment" "github_deploy_cdn" {
-  scope                = data.azurerm_cdn_profile.cityoftraitors.id
-  role_definition_name = "CDN Endpoint Contributor"
-  principal_id         = azuread_service_principal.cityoftraitors_github.object_id
-}
