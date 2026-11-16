@@ -11,12 +11,20 @@ resource "azuread_application" "cityoftraitors_github" {
   web {
     homepage_url = "https://www.cityoftraitors.com"
   }
+
+  lifecycle {
+    ignore_changes = [owners]
+  }
 }
 
 resource "azuread_service_principal" "cityoftraitors_github" {
   client_id                    = azuread_application.cityoftraitors_github.client_id
   app_role_assignment_required = false
   owners                       = [data.azurerm_client_config.current.object_id]
+
+  lifecycle {
+    ignore_changes = [owners]
+  }
 }
 
 resource "azuread_application_federated_identity_credential" "cityoftraitors_github" {
