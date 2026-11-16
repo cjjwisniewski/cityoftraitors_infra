@@ -29,7 +29,8 @@ This repository contains the Terraform configuration for **`cityoftraitors.com`*
   - `@` and `www` CNAMEs point to `cityoftraitorscom.z20.web.core.windows.net` (`proxied = true`).
   - `asverify` CNAME -> `asverify.cityoftraitorscom.z20.web.core.windows.net` **must remain `proxied = false`** for Azure domain validation.
   - `www.cityoftraitors.com/*` redirects `301` to `https://cityoftraitors.com/$1`.
-  - Zone SSL is `full` with `always_use_https = "on"`, `automatic_https_rewrites = "on"`, and `brotli = "on"`.
+  - Zone SSL is `full` with `always_use_https = "on"`, `automatic_https_rewrites = "on"`, `brotli = "on"`, `email_obfuscation = "off"`, and `rocket_loader = "off"`.
+  - Response security headers (`CSP`, `HSTS`, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) for `cityoftraitors.com` are managed alongside `seeker.cityoftraitors.com` inside `seeker_infra/dns/main.tf` (`cloudflare_ruleset.security_headers`), because Cloudflare allows only one `http_response_headers_transform` ruleset per zone.
 - **GitHub Actions OIDC (`app_registrations/main.tf`)**:
   - `cityoftraitors-com-github-actions` App/SP has federated identity scoped strictly to `repo:cjjwisniewski/cityoftraitors.com:ref:refs/heads/main` and `Storage Blob Data Contributor` on `cityoftraitorscom`.
   - `azuread_application` and `azuread_service_principal` use `lifecycle { ignore_changes = [owners] }` to prevent drift when Terraform runs under a CI Service Principal.

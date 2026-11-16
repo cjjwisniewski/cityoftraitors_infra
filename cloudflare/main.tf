@@ -26,6 +26,8 @@ resource "cloudflare_zone_settings_override" "cityoftraitors_settings" {
     always_use_https         = "on"
     automatic_https_rewrites = "on"
     brotli                   = "on"
+    email_obfuscation        = "off"
+    rocket_loader            = "off"
     security_level           = "medium"
     ssl                      = "full"
   }
