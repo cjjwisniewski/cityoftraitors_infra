@@ -130,3 +130,25 @@ resource "cloudflare_record" "asverify" {
   type    = "CNAME"
   proxied = false
 }
+
+# Email anti-spoofing records (non-sending domain: null SPF, null DKIM, strict DMARC reject)
+resource "cloudflare_record" "spf" {
+  zone_id = data.cloudflare_zone.cityoftraitors.id
+  name    = "@"
+  type    = "TXT"
+  content = "v=spf1 -all"
+}
+
+resource "cloudflare_record" "dkim_null" {
+  zone_id = data.cloudflare_zone.cityoftraitors.id
+  name    = "*._domainkey"
+  type    = "TXT"
+  content = "v=DKIM1; p="
+}
+
+resource "cloudflare_record" "dmarc" {
+  zone_id = data.cloudflare_zone.cityoftraitors.id
+  name    = "_dmarc"
+  type    = "TXT"
+  content = "v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s;"
+}
